@@ -72,7 +72,7 @@ instantiateResampleInstance.FixedCVDesc = function(desc, size, task = NULL) {
     test.inds = lapply(test.inds, function(x) x + 1)
   }
   desc$iters = length(test.inds)
-  makeResampleInstanceInternal(desc, size, train.inds = train.inds, test.inds = test.inds )
+  makeResampleInstanceInternal(desc, size, train.inds = train.inds, test.inds = test.inds)
 }
 
 instantiateResampleInstance.GrowingCVDesc = function(desc, size, task = NULL) {
@@ -109,5 +109,5 @@ instantiateResampleInstance.GrowingCVDesc = function(desc, size, task = NULL) {
     test.inds = lapply(test.inds, function(x) x + 1)
   }
   desc$iters = length(test.inds)
-  makeResampleInstanceInternal(desc, size, train.inds = train.inds, test.inds = test.inds )
+  makeResampleInstanceInternal(desc, size, train.inds = train.inds, test.inds = test.inds)
 }
