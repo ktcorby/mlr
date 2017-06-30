@@ -115,6 +115,8 @@ makeStackedLearner = function(base.learners, super.learner = NULL, predict.type 
   if ("se" %in% pts || (!is.null(predict.type) && predict.type == "se") ||
         (!is.null(super.learner) && super.learner$predict.type == "se"))
     stop("Predicting standard errors currently not supported.")
+  if ("quantiles" %in% pts && !(method %in% c("stack.nocv", "stack.cv")))
+    stop("Quantile regression for base learners is currently only supported for methods stack.cv and stack.nocv.")
   if (length(pts) > 1L)
     stop("Base learner must all have the same predict type!")
   if ((method == "average" || method == "hill.climb") & (!is.null(super.learner) || is.null(predict.type)))
@@ -588,6 +590,12 @@ getResponse = function(pred, full.matrix = TRUE) {
       # return only vector of probabilities for binary classification
       return(getPredictionProbabilities(pred))
     }
+  } else if (pred$predict.type == "quantiles" &&
+             length(dim(pred$data)) == 2 &&
+             dim(pred$data)[2] > 1) {
+    to.keep = names(pred$data)
+    to.keep = to.keep[!(to.keep %in% c("id", "truth", "iter", "set"))]
+    pred$data[,to.keep]
   } else {
     # if regression task
     pred$data$response

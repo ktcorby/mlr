@@ -31,7 +31,7 @@ setPredictType.Learner = function(learner, predict.type) {
   assertChoice(predict.type, choices = switch(learner$type,
     classif = c("response", "prob"),
     multilabel = c("response", "prob"),
-    regr = c("response", "se"),
+    regr = c("response", "se", "quantiles"),
     surv = c("response", "prob"),
     costsens = "response",
     cluster = c("response", "prob")
@@ -40,6 +40,8 @@ setPredictType.Learner = function(learner, predict.type) {
     stopf("Trying to predict probs, but %s does not support that!", learner$id)
   if (predict.type == "se" && !hasLearnerProperties(learner, "se"))
     stopf("Trying to predict standard errors, but %s does not support that!", learner$id)
+  if (predict.type == "quantiles" && !hasLearnerProperties(learner, "quantiles"))
+    stopf("Trying to predict quantiles, but %s does not support that!", learner$id)
   learner$predict.type = predict.type
   return(learner)
 }

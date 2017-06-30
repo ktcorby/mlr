@@ -26,7 +26,7 @@ mlr = new.env(parent = emptyenv())
 mlr$learner.properties = list(
   classif    = c("numerics", "factors", "ordered", "missings", "weights", "prob", "oneclass", "twoclass", "multiclass", "class.weights", "featimp", "oobpreds"),
   multilabel = c("numerics", "factors", "ordered", "missings", "weights", "prob", "oneclass", "twoclass", "multiclass"),
-  regr       = c("numerics", "factors", "ordered", "missings", "weights", "se", "featimp", "oobpreds"),
+  regr       = c("numerics", "factors", "ordered", "missings", "weights", "se", "featimp", "oobpreds", "quantiles"),
   cluster    = c("numerics", "factors", "ordered", "missings", "weights", "prob"),
   surv       = c("numerics", "factors", "ordered", "missings", "weights", "prob", "lcens", "rcens", "icens", "featimp", "oobpreds"),
   costsens   = c("numerics", "factors", "ordered", "missings", "weights", "prob", "twoclass", "multiclass")

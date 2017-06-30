@@ -43,6 +43,13 @@ makePrediction.RegrTaskDesc = function(task.desc, row.names, id, truth, predict.
   data$truth = truth
   if (predict.type == "response") {
     data$response = y
+  } else if (predict.type == "quantiles") {
+    if (!is.vector(y) &&
+        !is.null(predict.threshold) &&
+        length(predict.threshold) == ncol(y)) {
+      colnames(y) = sprintf("%02d", 100 * predict.threshold)
+    }
+    data$response = y
   } else {
     data$response = y[, 1L]
     data$se = y[, 2L]
