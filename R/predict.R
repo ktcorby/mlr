@@ -132,11 +132,7 @@ predict.WrappedModel = function(object, task, newdata, subset = NULL, ...) {
     ids = subset
   predict.threshold = learner$predict.threshold
   if (getLearnerPredictType(learner) == "quantiles") {
-    predict.threshold = append(append(
-      getLearnerParVals(learner, "both"),
-      getLearnerParVals(learner, "train")),
-      getLearnerParVals(learner, "predict"))
-    tau = predict.threshold[["tau"]]
+    tau = getQuantiles(learner)
     if (is.null(tau)) {
       n = ncol(p)
       tau = seq(0, 1, 1 / (n + 1))[2:(n+1)]

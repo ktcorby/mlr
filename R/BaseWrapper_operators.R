@@ -50,3 +50,9 @@ setPredictType.BaseWrapper = function(learner, predict.type) {
   setPredictType.Learner(learner, predict.type)
 }
 
+#' @export
+getQuantiles.BaseWrapper = function(learner) {
+  return(getQuantiles(learner$next.learner))
+}
+
+

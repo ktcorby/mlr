@@ -119,3 +119,19 @@ getLearnerShortName = function(learner) {
   return(learner.short.name)
 }
 
+#' @export
+getQuantiles = function(learner) {
+  assertClass(learner, classes = "Learner")
+  UseMethod("getHyperPars")
+}
+
+
+#' @export
+getQuantiles.RLearnerRegr = function(learner) {
+  parVals = append(append(
+    getLearnerParVals(learner, "both"),
+    getLearnerParVals(learner, "train")),
+    getLearnerParVals(learner, "predict"))
+  tau = parVals[["tau"]]
+  return(tau)
+}

@@ -47,7 +47,7 @@ makePrediction.RegrTaskDesc = function(task.desc, row.names, id, truth, predict.
     if (!is.vector(y) &&
         !is.null(predict.threshold) &&
         length(predict.threshold) == ncol(y)) {
-      colnames(y) = sprintf("%02d", 100 * predict.threshold)
+      colnames(y) = sprintf("%02g", 100 * predict.threshold)
     }
     data$response = y
   } else {

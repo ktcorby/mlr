@@ -140,6 +140,16 @@ makeStackedLearner = function(base.learners, super.learner = NULL, predict.type 
   # get predict.type from super learner or from predict.type
   if (!is.null(super.learner)) {
     lrn = setPredictType(lrn, predict.type = super.learner$predict.type)
+
+    # Set the quantiles from the super learner
+    # Not sure this is really necessary or wise but don't think it hurts
+    if (getLearnerPredictType(super.learner) == "quantiles"
+        && is.null(parset[["tau"]])) {
+      tau = getQuantiles(super.learner)
+      if (!is.null(tau)) {
+        parset[["tau"]] = tau
+      }
+    }
   } else {
     lrn = setPredictType(lrn, predict.type = predict.type)
   }
@@ -292,6 +302,8 @@ predictLearner.StackedLearner = function(.learner, .model, .newdata, ...) {
     pred = predict(sm, newdata = pred.data)
     if (sm.pt == "prob") {
       return(as.matrix(getPredictionProbabilities(pred, cl = td$class.levels)))
+    } else if (sm.pt == "quantiles") {
+      return(pred$data)
     } else {
       return(pred$data$response)
     }
@@ -731,6 +743,12 @@ getPseudoData = function(.data, k = 3, prob = 0.1, s = NULL, ...) {
     res[[i]] = factor(res[[i]], labels = ori.labels[[i]])
   return(res)
 }
+
+#' @export
+getQuantiles.StackedLearner = function(learner) {
+  return(getQuantiles(learner$super.learner))
+}
+
 
 # FIXMEs:
 # - document + test + export
