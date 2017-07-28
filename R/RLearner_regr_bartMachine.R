@@ -27,10 +27,11 @@ makeRLearner.regr.bartMachine = function() {
       makeLogicalLearnerParam(id = "mem_cache_for_speed", default = TRUE),
       makeLogicalLearnerParam(id = "serialize", default = FALSE, tunable = FALSE),
       makeIntegerLearnerParam(id = "seed", tunable = FALSE),
-      makeLogicalLearnerParam(id = "verbose", default = TRUE, tunable = FALSE)
+      makeLogicalLearnerParam(id = "verbose", default = TRUE, tunable = FALSE),
+      makeNumericVectorLearnerParam(id = "tau", default = c(0.5))
     ),
     par.vals = list("use_missing_data" = TRUE),
-    properties = c("numerics", "factors", "missings"),
+    properties = c("numerics", "factors", "missings", "quantiles"),
     name = "Bayesian Additive Regression Trees",
     short.name = "bartmachine",
     note = "`use_missing_data` has been set to `TRUE` by default to allow missing data support.",
@@ -39,13 +40,31 @@ makeRLearner.regr.bartMachine = function() {
 }
 
 #' @export
-trainLearner.regr.bartMachine = function(.learner, .task, .subset, .weights = NULL, ...) {
+trainLearner.regr.bartMachine = function(.learner, .task, .subset, .weights = NULL, tau = c(0.5),
+                                         serialize = FALSE, ...) {
   d = getTaskData(.task, .subset, target.extra = TRUE)
-  bartMachine::bartMachine(X = d$data, y = d$target, ...)
+  rv = bartMachine::bartMachine(X = d$data, y = d$target, serialize = serialize,
+                                mem_cache_for_speed = FALSE, ...)
+  return(rv)
 }
 
 #' @export
 predictLearner.regr.bartMachine = function(.learner, .model, .newdata, ...) {
-  predict(.model$learner.model, new_data = .newdata, ...)
+  rv = predict(.model$learner.model, new_data = .newdata, ...)
+  if (.learner$predict.type == "quantiles") {
+    tau = .learner$par.vals$tau
+    rv = sapply(tau,
+             function(q) {
+               idx = if (q > 0.5) 2 else 1
+               conf = 2 * abs(q - 0.5)
+               return(calc_prediction_intervals(.model$learner.model,
+                                         new_data = .newdata,
+                                         conf)[,idx])
+             })
+    return(rv)
+  }
+  else {
+    return(rv)
+  }
 }
 
