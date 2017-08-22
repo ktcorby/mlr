@@ -28,7 +28,8 @@ makeRLearner.regr.bartMachine = function() {
       makeLogicalLearnerParam(id = "serialize", default = FALSE, tunable = FALSE),
       makeIntegerLearnerParam(id = "seed", tunable = FALSE),
       makeLogicalLearnerParam(id = "verbose", default = TRUE, tunable = FALSE),
-      makeNumericVectorLearnerParam(id = "tau", default = c(0.5))
+      makeNumericVectorLearnerParam(id = "tau", default = c(0.5)),
+      makeIntegerLearnerParam(id = "num_samples_per_data_point", default = 1000)
     ),
     par.vals = list("use_missing_data" = TRUE),
     properties = c("numerics", "factors", "missings", "quantiles"),
@@ -50,20 +51,27 @@ trainLearner.regr.bartMachine = function(.learner, .task, .subset, .weights = NU
 
 #' @export
 predictLearner.regr.bartMachine = function(.learner, .model, .newdata, ...) {
-  rv = predict(.model$learner.model, new_data = .newdata, ...)
   if (.learner$predict.type == "quantiles") {
     tau = .learner$par.vals$tau
     rv = sapply(tau,
              function(q) {
                idx = if (q > 0.5) 2 else 1
                conf = 2 * abs(q - 0.5)
-               return(calc_prediction_intervals(.model$learner.model,
-                                         new_data = .newdata,
-                                         conf)[,idx])
+               num_samples = getLearnerParVals(.learner)$num_samples_per_data_point
+               if (is.null(num_samples)) {
+                 num_samples = 1000
+               }
+               xyz = bartMachine::calc_prediction_intervals(.model$learner.model,
+                                         new_data = .newdata[,.model$features],
+                                         pi_conf = conf,
+                                         num_samples_per_data_point = num_samples)
+               abc = xyz[,idx]
+               return(abc)
              })
     return(rv)
   }
   else {
+    rv = predict(.model$learner.model, new_data = .newdata, ...)
     return(rv)
   }
 }
