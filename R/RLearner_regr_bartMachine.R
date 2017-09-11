@@ -53,21 +53,10 @@ trainLearner.regr.bartMachine = function(.learner, .task, .subset, .weights = NU
 predictLearner.regr.bartMachine = function(.learner, .model, .newdata, ...) {
   if (.learner$predict.type == "quantiles") {
     tau = .learner$par.vals$tau
-    rv = sapply(tau,
-             function(q) {
-               idx = if (q > 0.5) 2 else 1
-               conf = 2 * abs(q - 0.5)
-               num_samples = getLearnerParVals(.learner)$num_samples_per_data_point
-               if (is.null(num_samples)) {
-                 num_samples = 1000
-               }
-               xyz = bartMachine::calc_prediction_intervals(.model$learner.model,
-                                         new_data = .newdata[,.model$features],
-                                         pi_conf = conf,
-                                         num_samples_per_data_point = num_samples)
-               abc = xyz[,idx]
-               return(abc)
-             })
+    post = bart_machine_get_posterior(.model$learner.model,
+                                      new_data = .newdata[,.model$features])
+    rv = t(apply(post$y_hat_posterior_samples, 1,
+                         function(x) quantile(x, probs=tau)))
     return(rv)
   }
   else {
