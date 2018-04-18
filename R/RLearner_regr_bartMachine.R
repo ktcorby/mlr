@@ -60,7 +60,8 @@ predictLearner.regr.bartMachine = function(.learner, .model, .newdata, ...) {
     return(rv)
   }
   else {
-    rv = predict(.model$learner.model, new_data = .newdata, ...)
+    .ndnd = .newdata[,.model$features]
+    rv = predict(.model$learner.model, new_data = .ndnd, ...)
     return(rv)
   }
 }
