@@ -1,7 +1,7 @@
 #' @export
 #' @inheritParams makeTuneControlMBO
-#' @param n.objectives [\code{integer(1)}]\cr
-#'   Number of objectives, i.e. number of \code{\link{Measure}}s to optimize.
+#' @param n.objectives (`integer(1)`)\cr
+#'   Number of objectives, i.e. number of [Measure]s to optimize.
 #' @rdname TuneMultiCritControl
 makeTuneMultiCritControlMBO = function(n.objectives = mbo.control$n.objectives,
   same.resampling.instance = TRUE, impute.val = NULL,
@@ -23,10 +23,10 @@ makeTuneMultiCritControlMBO = function(n.objectives = mbo.control$n.objectives,
   assertClass(mbo.control, "MBOControl")
   assertFlag(continue)
 
-  if (!is.null(budget) && !is.null(mbo.design) && nrow(mbo.design) > budget)
+  if (!is.null(budget) && !is.null(mbo.design) && nrow(mbo.design) > budget) {
     stopf("The size of the initial design (init.design.points = %i) exceeds the given budget (%i).",
       nrow(mbo.design), budget)
-  else if (!is.null(budget)) {
+  } else if (!is.null(budget)) {
     mbo.control = mlrMBO::setMBOControlTermination(mbo.control, max.evals = budget)
   }
 

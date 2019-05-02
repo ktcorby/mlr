@@ -1,5 +1,6 @@
 #' @export
 makeRLearner.regr.bartMachine = function() {
+
   makeRLearnerRegr(
     cl = "regr.bartMachine",
     package = "bartMachine",
@@ -65,4 +66,3 @@ predictLearner.regr.bartMachine = function(.learner, .model, .newdata, ...) {
     return(rv)
   }
 }
-
