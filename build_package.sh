@@ -6,10 +6,9 @@ sed s@"%BUILD_TIMESTAMP%"@"${VERSION}"@g DESCRIPTION > DESCRIPTION.new
 cp -v DESCRIPTION DESCRIPTION.orig
 mv -v DESCRIPTION.new DESCRIPTION
 
-R -e "library(devtools); document()" || { echo 'R devtools::document()' ; exit 1; }
 #R CMD check . || { echo 'R CMD check failed' ; exit 1; }
 R CMD build . || { echo 'R CMD build failed' ; exit 1; }
-
+#R -e "library(devtools); document()" || { echo 'R devtools::document()' ; exit 1; }
 mv -v DESCRIPTION.orig DESCRIPTION
 
 MANUAL_NAME=`ls -tr ..Rcheck/*pdf | tail -1`
